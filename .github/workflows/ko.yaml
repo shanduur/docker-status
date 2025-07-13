@@ -21,5 +21,7 @@ jobs:
         with:
           go-version-file: go.mod
       - uses: ko-build/setup-ko@v0.9
-      - run: |
+      - env:
+          KO_DEFAULTBASEIMAGE: gcr.io/distroless/static:latest
+        run: |
           ko build -B
