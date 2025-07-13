@@ -14,7 +14,11 @@
       <h1 class="text-center text-3xl font-semibold text-gray-900 tracking-tight">Container Dashboard</h1>
     </header>
 
-    <section class="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
+    <div id="errorSection" class="bg-red-100 border border-red-300 text-red-700 rounded-lg p-4 text-center hidden">
+      <!-- injected by JS -->
+    </div>
+
+    <section id="tableSection" class="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
       <div class="overflow-x-auto">
         <table class="min-w-full text-sm text-left border-separate border-spacing-0">
           <thead class="bg-gray-50 border-b border-gray-200 text-gray-600 font-medium">
@@ -35,8 +39,10 @@
   </div>
 
   <script>
-    const socket = new WebSocket("ws://" + location.host + "/ws");
+    const socket = new WebSocket("ws://" + location.host + "/ws/stats");
     const table = document.getElementById("containerTable");
+    const errorSection = document.getElementById("errorSection");
+    const tableSection = document.getElementById("tableSection");
 
     socket.onmessage = (event) => {
       const containers = JSON.parse(event.data);
@@ -48,18 +54,23 @@
             <td class="px-4 py-2">${c.name}</td>
             <td class="px-4 py-2 text-gray-500">${c.image}</td>
             <td class="px-4 py-2">
-              <span class="inline-block px-2 py-0.5 rounded text-xs font-semibold ${
-                c.status.includes('Up')
-                  ? 'bg-green-100 text-green-800'
-                  : c.status.includes('Exited')
-                    ? 'bg-red-100 text-red-800'
-                    : 'bg-gray-100 text-gray-800'
-              }">${c.status}</span>
+              <span class="inline-block px-2 py-0.5 rounded text-xs font-semibold ${c.status.includes('Up')
+            ? 'bg-green-100 text-green-800'
+            : c.status.includes('Exited')
+              ? 'bg-red-100 text-red-800'
+              : 'bg-gray-100 text-gray-800'
+          }">${c.status}</span>
             </td>
             <td class="px-4 py-2 text-gray-700">${c.state}</td>
           </tr>
         `;
       });
+    };
+
+    socket.onerror = () => {
+      errorSection.textContent = "Failed to connect to the status stream.";
+      errorSection.classList.remove("hidden");
+      tableSection.classList.add("hidden");
     };
   </script>
 </body>

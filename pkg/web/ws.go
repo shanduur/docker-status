@@ -24,7 +24,7 @@ func NewStatsHandler(store *store.Store) *StatsHandler {
 func (sh *StatsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("WebSocket Upgrade Error:", err)
+		log.Println("WebSocket upgrade error:", err)
 		return
 	}
 	defer conn.Close()
@@ -33,6 +33,12 @@ func (sh *StatsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	ticker := time.NewTicker(2 * time.Second)
 	defer ticker.Stop()
+
+	stats := sh.store.Get()
+	if err := conn.WriteJSON(stats); err != nil {
+		log.Println("WebSocket write error:", err)
+		return
+	}
 
 	for {
 		select {

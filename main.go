@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/docker/docker/client"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/shanduur/docker-status/pkg/lister"
 	"github.com/shanduur/docker-status/pkg/store"
@@ -37,11 +38,15 @@ func main() {
 
 	st := &store.Store{}
 
-	l, err := lister.New(st)
+	cli, err := client.NewClientWithOpts(
+		client.FromEnv,
+		client.WithAPIVersionNegotiation(),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	l := lister.New(st, cli)
 	go l.Run(ctx)
 
 	mux.Handle("/",
@@ -51,7 +56,7 @@ func main() {
 			middleware.RateLimit,
 		),
 	)
-	mux.Handle("/ws",
+	mux.Handle("/ws/stats",
 		middleware.Add(
 			web.NewStatsHandler(st),
 			middleware.Logging,
@@ -66,9 +71,6 @@ func main() {
 		),
 	)
 
-	log.Printf("Server started at %q", addr)
-
-	// create listener and server, and handle graceful shutdown
 	srv := http.Server{
 		Addr:    addr,
 		Handler: mux,
@@ -80,6 +82,8 @@ func main() {
 		}
 	}()
 
+	log.Printf("Server started at %q", addr)
+
 	<-ctx.Done()
 	log.Println("Shutting down server...")
 
@@ -87,6 +91,6 @@ func main() {
 	defer shutdownCancel()
 
 	if err := srv.Shutdown(shutdownCtx); err != nil {
-		log.Fatalf("Server Shutdown Failed:%+v", err)
+		log.Fatalf("Server shutdown failed: %v", err)
 	}
 }

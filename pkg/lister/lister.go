@@ -28,22 +28,14 @@ type Lister struct {
 	store *store.Store
 }
 
-func New(store *store.Store) (*Lister, error) {
-	cli, err := client.NewClientWithOpts(
-		client.FromEnv,
-		client.WithAPIVersionNegotiation(),
-	)
-	if err != nil {
-		return nil, err
-	}
-
+func New(store *store.Store, cli *client.Client) *Lister {
 	// Register the metric
 	prometheus.MustRegister(containerStatusInfo)
 
 	return &Lister{
 		cli:   cli,
 		store: store,
-	}, nil
+	}
 }
 
 func (l *Lister) Run(ctx context.Context) {
