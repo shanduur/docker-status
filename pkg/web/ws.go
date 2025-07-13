@@ -1,8 +1,10 @@
 package web
 
 import (
+	"context"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -29,15 +31,36 @@ func (sh *StatsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	ctx := r.Context()
+	n := 1
 
-	ticker := time.NewTicker(2 * time.Second)
+	interval := r.URL.Query().Get("n")
+	if interval != "" {
+		np, err := strconv.Atoi(interval)
+		if err == nil {
+			n = np
+			log.Printf("Ticking interval is set to %ds", n)
+		}
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	go func() {
+		for {
+			if _, _, err := conn.NextReader(); err != nil {
+				log.Printf("WebSocket disconnected: %v", err)
+				cancel()
+				return
+			}
+		}
+	}()
+
+	ticker := time.NewTicker(time.Second * time.Duration(n))
 	defer ticker.Stop()
 
 	stats := sh.store.Get()
 	if err := conn.WriteJSON(stats); err != nil {
 		log.Println("WebSocket write error:", err)
-		return
 	}
 
 	for {
@@ -47,7 +70,6 @@ func (sh *StatsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 			if err := conn.WriteJSON(stats); err != nil {
 				log.Println("WebSocket write error:", err)
-				return
 			}
 
 		case <-ctx.Done():

@@ -39,7 +39,7 @@
   </div>
 
   <script>
-    const socket = new WebSocket("ws://" + location.host + "/ws/stats");
+    const socket = new WebSocket("ws://" + location.host + "/ws/stats" + location.search);
     const table = document.getElementById("containerTable");
     const errorSection = document.getElementById("errorSection");
     const tableSection = document.getElementById("tableSection");
