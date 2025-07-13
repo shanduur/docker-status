@@ -4,7 +4,7 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/shanduur/monorepo/docker-status/pkg/model"
+	"github.com/shanduur/docker-status/pkg/model"
 )
 
 type Store struct {

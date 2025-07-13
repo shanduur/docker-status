@@ -1,4 +1,4 @@
-module github.com/shanduur/monorepo/docker-status
+module github.com/shanduur/docker-status
 
 go 1.24.4
 

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/shanduur/monorepo/docker-status/pkg/store"
+	"github.com/shanduur/docker-status/pkg/store"
 )
 
 var upgrader = websocket.Upgrader{}

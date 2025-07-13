@@ -9,8 +9,8 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/shanduur/monorepo/docker-status/pkg/model"
-	"github.com/shanduur/monorepo/docker-status/pkg/store"
+	"github.com/shanduur/docker-status/pkg/model"
+	"github.com/shanduur/docker-status/pkg/store"
 )
 
 var (

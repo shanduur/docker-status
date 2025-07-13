@@ -11,10 +11,10 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/shanduur/monorepo/docker-status/pkg/lister"
-	"github.com/shanduur/monorepo/docker-status/pkg/store"
-	"github.com/shanduur/monorepo/docker-status/pkg/web"
-	"github.com/shanduur/monorepo/docker-status/pkg/web/middleware"
+	"github.com/shanduur/docker-status/pkg/lister"
+	"github.com/shanduur/docker-status/pkg/store"
+	"github.com/shanduur/docker-status/pkg/web"
+	"github.com/shanduur/docker-status/pkg/web/middleware"
 )
 
 var (
