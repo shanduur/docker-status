@@ -1,0 +1,21 @@
+name: Publish
+
+on:
+  push:
+    branches: ['main']
+    paths:
+      - docker-status/**
+      - .github/workflows/ko.yaml
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: 'docker-status/go.mod'
+      - uses: ko-build/setup-ko@v0.9
+      - run: |
+          cd docker-status && ko build -B
