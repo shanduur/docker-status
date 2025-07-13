@@ -8,6 +8,10 @@ on:
       - .github/workflows/ko.yaml
   workflow_dispatch:
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
