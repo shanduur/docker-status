@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - uses: ko-build/setup-ko@v0.9
+      - uses: ko-build/setup-ko@v0.10
       - env:
           KO_DEFAULTBASEIMAGE: gcr.io/distroless/static:latest
         run: |
