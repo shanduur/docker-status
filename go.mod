@@ -1,12 +1,12 @@
 module github.com/shanduur/docker-status
 
-go 1.24.4
+go 1.26.0
 
 require (
 	github.com/docker/docker v28.3.2+incompatible
 	github.com/gorilla/websocket v1.5.3
 	github.com/prometheus/client_golang v1.22.0
-	golang.org/x/time v0.12.0
+	golang.org/x/time v0.16.0
 )
 
 require (
